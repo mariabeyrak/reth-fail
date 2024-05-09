@@ -2504,7 +2504,7 @@ impl<TX: DbTxMut + DbTx> BlockWriter for DatabaseProvider<TX> {
             parent_ttd + block.difficulty
         };
 
-        self.tx.put::<tables::HeaderTerminalDifficulties>(123, ttd.into())?;
+        self.tx.put::<tables::HeaderTerminalDifficulties>(block_number, ttd.into())?;
         durations_recorder.record_relative(metrics::Action::InsertHeaderTerminalDifficulties);
 
         // insert body ommers data
