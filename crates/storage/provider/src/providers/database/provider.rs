@@ -2504,7 +2504,7 @@ impl<TX: DbTxMut + DbTx> BlockWriter for DatabaseProvider<TX> {
             parent_ttd + block.difficulty
         };
 
-        self.tx.put::<tables::HeaderTerminalDifficulties>(block_number, ttd.into())?;
+        self.tx.put::<tables::HeaderTerminalDifficulties>(123, ttd.into())?;
         durations_recorder.record_relative(metrics::Action::InsertHeaderTerminalDifficulties);
 
         // insert body ommers data
@@ -2622,7 +2622,7 @@ impl<TX: DbTxMut + DbTx> BlockWriter for DatabaseProvider<TX> {
             return Ok(())
         }
 
-        let first_number = 1; //blocks.first().unwrap().number;
+        let first_number = blocks.first().unwrap().number;
         info!(first_number);
 
         let last = blocks.last().unwrap();
