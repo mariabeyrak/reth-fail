@@ -5,8 +5,9 @@ use reth_db::{
     transaction::{DbTx, DbTxMut},
 };
 use reth_interfaces::db::DatabaseError;
-use reth_primitives::{revm::compat::into_reth_acc, Bytecode, StorageEntry, U256};
+use reth_primitives::{revm::compat::into_reth_acc, Bytecode, StorageEntry, U256, alloy_primitives::fixed_bytes};
 use revm::db::states::{PlainStorageChangeset, StateChangeset};
+use tracing::{info};
 
 /// A change to the state of the world.
 #[derive(Debug, Default)]
@@ -21,6 +22,7 @@ impl From<StateChangeset> for StateChanges {
 impl StateChanges {
     /// Write the bundle state to the database.
     pub fn write_to_db<TX: DbTxMut + DbTx>(mut self, tx: &TX) -> Result<(), DatabaseError> {
+        info!("write_to_db");
         // sort all entries so they can be written to database in more performant way.
         // and take smaller memory footprint.
         self.0.accounts.par_sort_by_key(|a| a.0);
@@ -45,7 +47,12 @@ impl StateChanges {
         tracing::trace!(target: "provider::bundle_state", len = self.0.contracts.len(), "Writing bytecodes");
         let mut bytecodes_cursor = tx.cursor_write::<tables::Bytecodes>()?;
         for (hash, bytecode) in self.0.contracts.into_iter() {
-            bytecodes_cursor.upsert(hash, Bytecode(bytecode))?;
+            info!("for loop {}", hash);
+            let data = fixed_bytes!("1234567890ab1234567890ab1234567890ab1234567890ab1234567890ab1234");
+            // let fixed_bytes = FixedBytes::copy_from_slice(array_ref(&data));
+            info!("for loop data {}", data);
+
+            bytecodes_cursor.upsert(data, Bytecode(bytecode))?;
         }
 
         // Write new storage state and wipe storage if needed.

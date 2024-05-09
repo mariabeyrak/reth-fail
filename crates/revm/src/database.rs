@@ -7,6 +7,7 @@ use revm::{
     Database, StateDBBox,
 };
 use std::ops::{Deref, DerefMut};
+use tracing::{info};
 
 /// SubState of database. Uses revm internal cache with binding to reth StateProvider trait.
 pub type SubState<DB> = CacheDB<StateProviderDatabase<DB>>;
@@ -112,6 +113,7 @@ impl<DB: StateProvider> DatabaseRef for StateProviderDatabase<DB> {
     ///
     /// Returns `Ok` with the block hash if found, or the default hash otherwise.
     fn block_hash_ref(&self, number: U256) -> Result<B256, Self::Error> {
+        info!("get block_hash_ref {}", number);
         // Attempt to convert U256 to u64
         let block_number = match number.try_into() {
             Ok(value) => value,
