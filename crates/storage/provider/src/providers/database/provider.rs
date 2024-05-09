@@ -57,7 +57,7 @@ use std::{
     sync::{mpsc, Arc},
     time::{Duration, Instant},
 };
-use tracing::{debug, error, warn};
+use tracing::{debug, error, warn, info};
 
 /// A [`DatabaseProvider`] that holds a read-only database transaction.
 pub type DatabaseProviderRO<DB> = DatabaseProvider<<DB as Database>::TX>;
@@ -2622,7 +2622,8 @@ impl<TX: DbTxMut + DbTx> BlockWriter for DatabaseProvider<TX> {
             return Ok(())
         }
 
-        let first_number = blocks.first().unwrap().number;
+        let first_number = 1; //blocks.first().unwrap().number;
+        info!(first_number);
 
         let last = blocks.last().unwrap();
         let last_block_number = last.number;

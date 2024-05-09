@@ -416,7 +416,7 @@ where
         block_number: Option<BlockId>,
     ) -> Result<EIP1186AccountProofResponse> {
         trace!(target: "rpc::eth", ?address, ?keys, ?block_number, "Serving eth_getProof");
-        let res = EthApi::get_proof(self, address, keys, Some(BlockId::from(2000))).await;
+        let res = EthApi::get_proof(self, address, keys, block_number).await;
 
         Ok(res.map_err(|e| match e {
             EthApiError::InvalidBlockRange => {
